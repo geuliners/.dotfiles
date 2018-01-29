@@ -1,0 +1,8 @@
+#! /bin/sh
+if pgrep mpd &> /dev/null; then
+    MPC_STATUS="$(mpc status | grep -o playing)"
+    MPC_LOCK="/tmp/mpc_wasplaying.lck"
+    if [ "$MPC_STATUS" = playing ]; then
+        touch "$MPC_LOCK" && mpc pause &> /dev/null
+    fi
+fi

@@ -1,0 +1,38 @@
+#! /bin/sh
+if pgrep Xorg &> /dev/null; then
+    SETTING="$1"
+    if [ "$SETTING" == "-c" ] || [ "$SETTING" == "--color" ]; then
+        if [ -f "/usr/bin/hsetroot" ]; then
+            hsetroot -solid "#737171"
+        else
+            echo "File: /usr/bin/hsetroot is missing"
+        fi
+    elif [ "$SETTING" == "-d" ] || [ "$SETTING" == "--default" ]; then
+        if [ -f "$HOME"/Pictures/dark-planet-minimalist-v2.png ]; then
+            feh --no-fehbg --bg-scale "$HOME"/Pictures/dark-planet-minimalist-v2.png
+        else
+            echo "File: $HOME/Pictures/dark-planet-minimalist-v2.png is missing"
+        fi
+    elif [ "$SETTING" == "-i" ] || [ "$SETTING" == "--inspire" ]; then
+        if [ -f "$HOME"/Pictures/mmi.jpg ]; then
+            feh --no-fehbg --bg-center "$HOME"/Pictures/mmi.jpg
+        else
+            echo "File: $HOME/Pictures/mmi.jpg is missing"
+        fi
+    elif [ "$SETTING" == "-h" ] || [ "$SETTING" == "--help" ] || [ -z "$SETTING" ]; then
+        echo "Usage: background_set [options]"
+        echo ""
+        echo "Options:"
+        echo "    -d, --default   Set dikiaap's dark minimalist wallpaper."
+        echo "    -i, --inspire   Set a cool and inspiring wallpaper."
+        echo "    -h, --help      Show this help message."
+    elif [ "$SETTING" == "-s" ] || [ "$SETTING" == "--specified" ]; then
+        if [ ! -z "$2" ] && [ -f "$2" ]; then
+            feh --no-fehbg --bg-scale "$2" 2> /dev/null || echo "File: $2 Is not a valid image"
+        else
+            echo "File: No image specified"
+        fi
+    else
+        echo "Unknown option: $SETTING"
+    fi
+fi

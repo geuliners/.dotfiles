@@ -1,0 +1,12 @@
+[Unit]
+Description=Turns on monitor on after sleep
+After=suspend.target
+
+[Service]
+User=%I
+Type=oneshot
+Environment=DISPLAY=:0
+ExecStart=/home/%I/.config/bspwm/scripts/screen_waker
+
+[Install]
+WantedBy=suspend.target

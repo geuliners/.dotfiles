@@ -1,0 +1,7 @@
+#! /bin/sh
+TORBIN="$HOME/.tor-browser_en-US/Browser/start-tor-browser"
+if [ -f "$TORBIN" ]; then
+    "$TORBIN" &> /dev/null
+else
+    echo "File: $TORBIN Is missing"
+fi

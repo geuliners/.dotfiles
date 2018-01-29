@@ -1,0 +1,21 @@
+#! /bin/sh
+
+kill_panel() {
+    pgrep panel &> /dev/null && pkill panel 
+}
+
+trap "trap - TERM; kill_panel; kill 0" INT TERM QUIT EXIT
+
+sxhkd &
+dunst &
+redshift &
+lxpolkit &
+mpd --no-daemon &
+devmon --no-gui &
+autocutsel -selection PRIMARY &
+autocutsel -selection CLIPBOARD &
+xautolock -time 25 -locker sleep_locker &
+transmission-daemon --paused --foreground &
+/usr/lib/bluetooth/obexd -a -r "$HOME"/Public &
+
+wait

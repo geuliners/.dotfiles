@@ -1,0 +1,19 @@
+EDITOR=vim
+PAGER=less
+WINEARCH=win32
+PANEL_HEIGHT=18
+PANEL_FONT=-xos4-terminus-medium-r-normal--12-120-72-72-c-60-iso10646-1
+VDPAU_DRIVER=va_gl
+QT_QPA_PLATFORMTHEME=gtk2
+GTK_PATH=:/usr/lib/gtk-2.0
+BSPWM_SOCKET=/tmp/bspwm.socket
+export EDITOR PAGER WINEARCH PANEL_HEIGHT PANEL_FONT VDPAU_DRIVER QT_QPA_PLATFORMTHEME GTK_PATH BSPWM_SOCKET
+
+if [[ -d $HOME/.config/bspwm/scripts ]]; then
+    PATH=$PATH:$HOME/.config/bspwm/scripts
+    export PATH
+fi
+if [[ -d "$HOME/Documents/Virtualization/Wine" ]]; then
+    WINEPREFIX="$HOME/Documents/Virtualization/Wine"
+    export WINEPREFIX
+fi

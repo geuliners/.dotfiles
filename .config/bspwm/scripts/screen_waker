@@ -1,0 +1,7 @@
+#! /bin/sh
+if pgrep Xorg &> /dev/null; then
+    if xset q | grep -o "Monitor is Off" &> /dev/null; then
+        echo "Display $DISPLAY is turned off. Turning it on ..."
+        xset dpms force on &> /dev/null
+    fi
+fi

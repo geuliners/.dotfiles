@@ -1,0 +1,48 @@
+# Lines configured by zsh-newuser-install
+HISTSIZE=5000
+setopt appendhistory autocd beep extendedglob nomatch notify
+bindkey -e
+# End of lines configured by zsh-newuser-install
+# The following lines were added by compinstall
+zstyle :compinstall filename '/home/$USER/.zshrc'
+autoload -Uz compinit
+compinit
+# End of lines added by compinstall
+
+
+setopt complete_in_word complete_aliases correct glob_complete histignoredups no_auto_list no_bad_pattern no_beep no_list_ambiguous no_list_beep share_history hist_find_no_dups nomatch
+unsetopt auto_remove_slash
+autoload -Uz colors && colors
+PROMPT="%{$fg[red]%}%m%{$reset_color%}:%{$fg[red]%}%1~ >%{$reset_color%} "
+
+bindkey "^[[7~" beginning-of-line
+bindkey "^[[1~" beginning-of-line
+bindkey "^[[8~" end-of-line
+bindkey "^[[4~" end-of-line
+bindkey "^[[5~" beginning-of-history
+bindkey "^[[6~" end-of-history
+bindkey "^[[3~" delete-char
+bindkey "^U"    backward-kill-line
+
+
+alias grep="grep --color=auto"
+alias startx="startx >/dev/null 2>&1"
+alias ls="ls -h --color=auto --group-directories-first"
+alias scrot="scrot 'Screenshot-%Y-%m-%d-%H-%M-%S'.png -e 'mv \$f ~/Pictures'"
+
+zstyle ':completion:*' completer _complete
+zstyle ':completion:*' menu select=long-list
+zstyle ':completion:*' matcher-list '' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' '+l:|=* r:|=*'
+zstyle ':completion:*' rehash true
+
+if [[ ! -z $DISPLAY ]] && [[ "$TERM" == rxvt-unicode-256color ]]; then
+    fortune -os | cowsay | lolcat
+else
+    neofetch
+fi
+
+mkpasswd() {
+	local l=$1
+       	[[ "$l" == "" ]] && l=256
+      	tr -dc A-Za-z0-9_ < /dev/urandom | head -c ${l} | xargs
+}

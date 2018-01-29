@@ -1,0 +1,59 @@
+# ObliivousGmn, May 2015
+# https://github.com/ObliviousGmn
+
+# MPD Settings .. 
+mpd_music_dir = "~/Music"
+ncmpcpp_directory = "~/.config/ncmpcpp"
+lyrics_directory = "~/.config/ncmpcpp/lyrics"
+
+# Display ..
+song_list_format = "$2 %A$0 - %t "
+#song_columns_list_format = "(3)[]{}(92)[white]{t} (4)[red]{l}"
+song_status_format = "$2%t $0 "
+playlist_display_mode = "classic" (classic/columns)
+
+# Now Playing ..
+now_playing_prefix = ">>"
+now_playing_suffix = "$2"
+
+# Playlist ..
+browser_playlist_prefix = "$2 ♥ $0 "
+
+# Delays .. 
+playlist_disable_highlight_delay = "1"
+message_delay_time= "1"
+
+# Progress Bar ..
+progressbar_look = "──"
+progressbar_color = "black"
+progressbar_elapsed_color = "cyan"
+
+# Colors ..
+colors_enabled = "yes"
+empty_tag_color = "red"
+statusbar_color = "white"
+state_line_color = "black"
+main_window_color = "white" 
+current_item_prefix = "$(white)$r"
+current_item_suffix = "$/r$(end)"
+
+# Misc ..   
+autocenter_mode = "yes"
+centered_cursor = "yes"
+titles_visibility = "no"
+statusbar_visibility = "yes"
+empty_tag_marker=" ---- " 
+header_visibility = "no"
+display_remaining_time = "no"
+ask_before_clearing_playlists = "no"
+discard_colors_if_item_is_selected = "yes"
+
+# Visualizer ..
+visualizer_in_stereo = "yes"
+visualizer_sync_interval = "30"
+visualizer_fifo_path = "/tmp/mpd.fifo"
+visualizer_type = "spectrum" (spectrum/wave)
+visualizer_color = "cyan"
+visualizer_look = "∙▋"
+
+allow_for_physical_item_deletion = "yes"

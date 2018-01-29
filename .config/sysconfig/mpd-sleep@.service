@@ -1,0 +1,11 @@
+[Unit]
+Description=Pause mpd on sleep
+Before=sleep.target
+
+[Service]
+User=%I
+Type=oneshot
+ExecStart=/home/%I/.config/bspwm/scripts/mpd_sleep
+
+[Install]
+WantedBy=sleep.target

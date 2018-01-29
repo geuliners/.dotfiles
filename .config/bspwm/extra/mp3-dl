@@ -1,0 +1,7 @@
+#! /bin/sh
+YTDLBIN="$(which youtube-dl)"
+if [ -f "$YTDLBIN" ]; then
+    "$YTDLBIN" --extract-audio --audio-format mp3 --audio-quality 0 "$@"
+else
+    echo "File: $YTDLBIN Is missing"
+fi

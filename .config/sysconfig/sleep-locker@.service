@@ -1,0 +1,13 @@
+[Unit]
+Description=Lock X session on sleep
+Before=sleep.target
+
+[Service]
+User=%I
+Type=simple
+Environment=DISPLAY=:0
+ExecStartPost=/usr/bin/sleep 3
+ExecStart=/home/%I/.config/bspwm/scripts/sleep_locker
+
+[Install]
+WantedBy=sleep.target

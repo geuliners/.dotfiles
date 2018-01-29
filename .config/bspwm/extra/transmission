@@ -1,0 +1,7 @@
+#! /bin/sh
+TORRENTBIN="$(which transmission-qt)"
+if [ -f "$TORRENTBIN" ]; then
+    "$TORRENTBIN" &> /dev/null
+else
+    echo "File: $TORRENTBIN Is missing"
+fi

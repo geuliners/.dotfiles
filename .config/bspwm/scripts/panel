@@ -1,0 +1,42 @@
+#! /bin/sh
+
+dont_leave_any_traces() {
+    pkill bspc
+    pkill conky
+    pkill panel_bar
+    bspc config top_padding 0
+    if [ -e /tmp/panel-$MONITOR.fifo ]; then
+        rm -rf /tmp/panel-$MONITOR.fifo
+    fi
+}
+
+trap "trap - TERM; dont_leave_any_traces; kill 0" INT TERM QUIT EXIT
+
+monitors=$(xrandr | grep -o "^.* connected" | sed "s/ connected//")
+for MONITOR in $(echo $monitors); do
+
+    PANEL_FIFO="/tmp/panel-"$MONITOR".fifo"
+    PANEL_WM_NAME="panel-"$MONITOR
+
+    [ -e "$PANEL_FIFO" ] && rm -rf "$PANEL_FIFO"
+    mkfifo "$PANEL_FIFO"
+
+    bspc config top_padding $PANEL_HEIGHT
+    bspc subscribe report > "$PANEL_FIFO" &
+    clock -sf 'S%a %H:%M' > "$PANEL_FIFO" &
+    conky -qc "$HOME"/.config/conky/status_conky.conf > "$PANEL_FIFO" &
+
+    . panel_colors
+
+    panel_bar < "$PANEL_FIFO" | lemonbar -a 32 -n "$PANEL_WM_NAME" -g x$PANEL_HEIGHT -f "$PANEL_FONT" -F "$COLOR_DEFAULT_FG" -B "$COLOR_DEFAULT_BG" "$MONITOR" | sh &
+
+    wid=$(xdo id -a "$PANEL_WM_NAME")
+    tries_left=20
+    while [ -z "$wid" -a "$tries_left" -gt 0 ] ; do
+        sleep 0.05
+        wid=$(xdo id -a "$PANEL_WM_NAME")
+        tries_left=$((tries_left - 1))
+    done
+    [ -n "$wid" ] && xdo above -t "$(xdo id -N Bspwm -n root | sort | head -n 1)" "$wid"
+    done
+wait

@@ -1,0 +1,37 @@
+! Xft settings
+Xft.dpi:                    96
+Xft.rgba:                   rgb
+Xft.hinting:                true
+Xft.hintstyle:              hintslight
+
+! URxvt settings
+URxvt.depth:                32
+URxvt.geometry:             70x20
+URxvt.transparent:          false
+URxvt.saveLines:            5000
+URxvt.internalBorder:       0
+URxvt.lineSpace:            0
+
+! Fonts
+URxvt.font:                 xft:xos4 Terminus-12:encoding=combined
+
+! Scrollbar
+URxvt.scrollStyle:          rxvt
+URxvt.scrollBar:            false
+URxvt*scrollTtyOutput:      false
+URxvt*scrollWithBuffer:     true
+URxvt.scrollTtyKeypress:    true
+
+! Perl extensions
+URxvt.perl-lib:            /usr/lib/urxvt/perl/
+URxvt.perl-ext-common:      default,matcher
+URxvt.url-launcher:         /usr/bin/xdg-open
+URxvt.matcher.button:       1
+
+
+! Cursor
+URxvt.cursorBlink:          true
+URxvt.cursorUnderline:      true
+
+! Pointer
+URxvt.pointerBlank:         true
