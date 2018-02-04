@@ -1,12 +1,18 @@
 #! /bin/sh
 
-kill_panel() {
-    pgrep panel &> /dev/null && pkill panel 
+kill_daemons() {
+    pkill mpd
+    pkill bspc
+    pkill panel
+    pkill conky
+    pkill udevil
+    pkill --signal HUP transmission-daemon
+    killall urxvt
+    killall chrome
 }
 
-trap "trap - TERM; kill_panel; kill 0" INT TERM QUIT EXIT
+trap "trap - TERM; kill_daemons; kill 0" INT TERM HUP QUIT EXIT
 
-sxhkd &
 dunst &
 redshift &
 lxpolkit &

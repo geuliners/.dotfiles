@@ -1,16 +1,16 @@
 #! /bin/sh
 
 dont_leave_any_traces() {
-    pkill bspc
-    pkill conky
-    pkill panel_bar
+    killall bspc
+    killall conky
+    killall panel_bar
     bspc config top_padding 0
     if [ -e /tmp/panel-$MONITOR.fifo ]; then
         rm -rf /tmp/panel-$MONITOR.fifo
     fi
 }
 
-trap "trap - TERM; dont_leave_any_traces; kill 0" INT TERM QUIT EXIT
+trap "trap - TERM; dont_leave_any_traces; kill 0" INT TERM HUP QUIT EXIT
 
 monitors=$(xrandr | grep -o "^.* connected" | sed "s/ connected//")
 for MONITOR in $(echo $monitors); do

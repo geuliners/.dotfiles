@@ -1,0 +1,1 @@
+../extra/play-stardewvalley.sh

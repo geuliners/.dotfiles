@@ -17,3 +17,7 @@ if [[ -d "$HOME/Documents/Virtualization/Wine" ]]; then
     WINEPREFIX="$HOME/Documents/Virtualization/Wine"
     export WINEPREFIX
 fi
+if [[ -d "/usr/lib/jvm/default" ]]; then
+    PYCHARM_JDK=/usr/lib/jvm/default
+    export PYCHARM_JDK
+fi
