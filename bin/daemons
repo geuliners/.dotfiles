@@ -1,0 +1,26 @@
+#! /bin/sh
+
+cleanup() {
+    killall chrome
+    killall urxvt 
+    killall conky
+    killall panel
+    killall mpd
+    killall devmon
+    killall transmission-daemon
+}
+
+trap "trap - TERM; cleanup; kill 0" INT TERM HUP QUIT EXIT
+
+dunst &
+redshift &
+lxpolkit &
+mpd --no-daemon &
+devmon --no-gui &
+autocutsel -selection PRIMARY &
+autocutsel -selection CLIPBOARD &
+transmission-daemon --foreground &
+xautolock -time 6 -locker sleep_locker &
+/usr/lib/bluetooth/obexd -a -r "$HOME"/Public &
+
+wait

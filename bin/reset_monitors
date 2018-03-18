@@ -1,0 +1,17 @@
+#! /bin/sh
+
+restart_panel() { 
+    pkill panel
+    panel &
+}
+if pgrep Xorg &> /dev/null; then
+    if xrandr | grep -o "HDMI-1 connected" &> /dev/null; then
+        xrandr --output HDMI-1 --same-as eDP-1 --auto --output eDP-1 --primary --auto
+        bspc monitor HDMI-1 -d 'HDMI-1'
+        restart_panel
+    else
+        bspc monitor HDMI-1 -r &> /dev/null
+        xrandr --output HDMI-1 --off
+        restart_panel
+    fi
+fi

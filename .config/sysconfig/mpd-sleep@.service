@@ -5,7 +5,7 @@ Before=sleep.target
 [Service]
 User=%I
 Type=oneshot
-ExecStart=/home/%I/.config/bspwm/scripts/mpd_sleep
+ExecStart=/home/%I/bin/mpd_sleep
 
 [Install]
 WantedBy=sleep.target

@@ -1,0 +1,15 @@
+#!/bin/sh
+PYTHONBIN="/usr/bin/python3.6"
+TERMBIN="/usr/bin/urxvt"
+if pgrep Xorg &> /dev/null; then
+    if [ -f "$PYTHONBIN" ]; then
+        "$TERMBIN" -e "$PYTHONBIN" -q
+    else
+        echo "File: $PYTHONBIN Is missing"
+    fi
+else
+    echo "pcalc: X is not running"
+    if [ ! -f "$PYTHONBIN" ]; then
+        echo "File: $PYTHONBIN Is missing"
+    fi
+fi

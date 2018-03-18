@@ -1,1 +1,0 @@
-../extra/play-terraria.sh

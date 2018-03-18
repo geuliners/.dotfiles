@@ -1,1 +1,0 @@
-../extra/play-codmw2.sh

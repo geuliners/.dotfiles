@@ -1,0 +1,329 @@
+# Set correct timezone
+ln -sf /usr/share/zoneinfo/Asia/Manila /etc/localtime
+
+# Establish internet connection
+wifi-menu
+
+# Enable NTP
+vim /etc/systemd/timesyncd.conf
+timedatectl set-ntp true
+systemctl restart systemd-timesyncd
+timedatectl
+
+# Update mirrors
+cd /etc/pacman.d/
+wget 'https://www.archlinux.org/mirrorlist/?country=JP' -O mirrorlist
+sed -i 's/^#//' mirrorlist
+
+# Wipe partitions
+wipefs -af /dev/sda[1-2]
+wipefs -af /dev/sda
+
+# Create partition table
+cfdisk /dev/sda
+
+# Format partitions
+mkfs.fat -F32 -n arch-boot /dev/sda1
+mkfs.ext4 -L arch-root /dev/sda2
+
+# Mount partitions
+mount /dev/sda2 /mnt
+mkdir /mnt/boot
+mount /dev/sda1 /mnt/boot
+
+# Bootstrap Arch Linux
+pacstrap -i /mnt base base-devel linux-zen linux-lts intel-ucode vim
+
+# Chroot to new installation
+arch-chroot /mnt
+
+# Set correct timezone
+ln -sf /usr/share/zoneinfo/Asia/Manila /etc/localtime
+
+# Sync hwclock
+hwclock --systohc
+
+# Disable history
+cd
+cp /etc/skel/.bash* .
+echo unset HISTFILE >> .bashrc
+
+# Generate locales
+vim /etc/locale.gen
+locale-gen
+echo LANG=en_PH.UTF-8 > /etc/locale.conf
+export LANG=en_PH.UTF-8
+
+# Enable multilib
+vim /etc/pacman.conf
+
+# Set keyboard map
+echo KEYMAP=us > /etc/vconsole.conf
+pacman -S terminus-font
+echo FONT=ter-v16b >> /etc/vconsole.conf
+echo FONT_MAP=8859-2 >> /etc/vconsole.conf
+
+# Set hostname
+echo darkstar > /etc/hostname
+
+# Edit hosts file
+vim /etc/hosts
+
+# Install network packages
+pacman -S networkmanager dnsmasq dhclient
+systemctl enable NetworkManager
+cp .dotfiles/.config/sysconfig/dhcp-client.conf
+
+# Edit mkinitcpio
+vim /etc/mkinitcpio.conf
+
+# Generate initramfs
+mkinitcpio -p linux-zen
+
+# Lock root user
+passwd -l root
+
+# Create normal user
+pacman -S zsh zsh-completions
+useradd -g users -G sys,wheel -s /bin/zsh hydra
+passwd hydra
+vim /etc/sudoers
+
+# Install bootloader
+pacman -S efibootmgr
+efibootmgr -v; efibootmgr -Bb 0001; efibootmgr -Bb 0000
+bootctl install
+mkdir /etc/pacman.d/hooks
+cp dotfiles/.config/sysconfig/systemd-boot.hook /etc/pacman.d/hooks
+blkid /dev/sda2 > /boot/loader/entries/arch-zen.conf
+blkid /dev/sda2 > /boot/loader/entries/arch-lts.conf
+vim /boot/loader/entries/arch-zen.conf
+vim /boot/loader/entries/arch-lts.conf
+vim /boot/loader/loader.conf
+
+# Create swap
+fallocate -l 4G /srv/swap
+chmod 600 /srv/swap
+mkswap -L arch-swap /srv/swap
+swapon /srv/swap
+
+# Install SSH daemon
+pacman -S openssh
+vim /etc/ssh/sshd_config
+systemctl enable sshd
+
+# Install XDG user directories
+pacman -S xdg-user-dirs
+su hydra
+cd
+xdg-user-dirs-update
+
+# Install Samba and CUPS
+pacman -S samba cups hplip minidlna vsftpd
+mkdir /srv/dlna
+cp dotfiles/.config/sysconfig/smb.conf /etc/samba
+cp dotfiles/.config/sysconfig/hosts.allow /etc
+cp dotfiles/.config/sysconfig/minidlna.conf /etc
+systemctl enable smbd nmbd org.cups.cupsd minidlna vsftpd
+
+# Install trizen
+pacman -S git
+git clone https://aur.archlinux.org/trizen.git
+cd trizen
+vim /etc/makepkg.conf
+makepkg -si
+
+# Install shell startup programs
+trizen -S neofetch
+pacman -S fortune-mod cowsay lolcat
+
+# Install missing firmware
+trizen -S wd719x-firware aic94xx-firmware
+
+# Enable audio
+pacman -S alsa-utils alsa-oss pulseaudio pulseaudio-alsa
+
+# Allow mounting with normal users
+pacman -S udisks2 udevil
+chmod -s /usr/bin/udevil
+
+# Install fuse filesystems
+pacman -S ntfs-3g exfat-utils f2fs-tools ifuse
+
+# Install power management daemons
+pacman -S tlp tlp-rdw x86_energy_perf_policy lsb-release thermald hddtemp smartmontools
+trizen -S low_battery_suspend
+cp /usr/lib/systemd/system/low_battery_suspend.service /etc/systemctl/system/
+vim /etc/systemd/system/low_battery_suspend.service
+vim /etc/default/tlp
+systemctl mask systemd-rfkill.service systemd-rfkill.socket
+systemctl enable tlp tlp-sleep thermald hddtemp smartd low_battery_suspend.timer
+
+# Install bluetooth
+pacman -S bluez bluez-utils
+systemctl enable bluetooth
+
+# Install useful CLI tools
+pacman -S htop ranger mediainfo w3m wget dvd+rw-tools p7zip zip unzip unrar rsync mpv mpd mpc ncmpcpp transmission-cli tree youtube-dl neomutt testdisk sl dmidecode lsof strace inxi cmatrix
+trizen -S nbwmon paccache-trim
+cp dotfiles/.config/sysconfig/paccache-*.hook /etc/pacman.d/hooks
+htop
+
+# Install Xorg
+pacman -S xorg-server xorg-xinit xf86-input-synaptics libva-intel-driver libvdpau-va-gl vulkan-intel xsel xorg-xprop xorg-xrandr xorg-xdpyinfo mesa-demos
+
+# Setup login and network time daemon
+vim /etc/systemd/logind.conf
+vim /etc/systemd/timesyncd.conf
+systemctl enable systemd-timesyncd
+
+# Sync configs then fix vim
+rsync -aAHXv .dotfiles/
+mkdir -p ~/.vim/bundle
+git clone 'https://github.com/VundleVim/Vundle.vim.git' ~/.vim/bundle/Vundle.vim
+pacman -S vim-airline powerline-fonts
+vim
+
+# Install window manager and hotkey daemon
+pacman -S bspwm sxhkd
+
+# Install xinitrc startup programs
+pacman -S xautolock xorg-xsetroot dunst compton lxsession feh xdo conky redshift autocutsel
+trizen -S lemonbar-sm-git sutils-git i3lock-fancy-dualmonitors-git
+cp dotfiles/.config/sysconfig/*@.service /etc/systemd/system
+systemctl enable mpd-sleep@hydra.service screen-waker@hydra.service sleep-locker@hydra.service
+
+# Install terminal
+pacman -S rxvt-unicode urxvt-perls
+
+# Install RAM tester
+trizen -S memtest86-efi
+cp dotfiles/.config/sysconfig/memtest86-efi.conf /boot/loader/entries
+
+# Install application launcher
+trizen -S dmenu2
+
+# Install backlight control and set minimum value
+trizen -S light
+
+# Install a basic color grabber
+trizen -S grabc
+
+# In case you liked solid color backgrounds
+trizen -S hsetroot
+
+# Install printer and scanner frontends
+pacman -S system-config-printer gtk3-print-backends simple-scan
+
+# Install GTK theming utility
+pacman -S lxappearance gtk-engines gtk-engine-murrine qt5-styleplugins
+trizen -S gtk3-nocsd-git
+cp dotfiles/.config/sysconfig/Trolltech.conf .config
+
+# Install icon and GTK themes
+pacman -S adapta-gtk-theme papirus-icon-theme
+
+# Install calculator
+pacman -S xorg-xcalc xorg-fonts-75dpi xorg-fonts-misc
+
+# Install VNC client
+pacman -S tigervnc
+
+# Install fonts
+pacman -S ttf-hack ttf-dejavu ttf-liberation noto-fonts noto-fonts-cjk noto-fonts-emoji
+trizen -S ttf-ms-fonts ttf-emojione-color
+
+# Install Android filesystem mounter
+pacman -S android-file-transfer gvfs-mtp
+
+# Install Bluetooth frontend
+pacman -S blueberry
+
+# Install Audio configuration utility
+pacman -S pavucontrol
+
+# Install BitTorrent downloader frontend
+pacman -S transmission-qt
+
+# Install LaTeX
+pacman -S gummi texlive-latexextra texlive-pictures
+
+# Install office suite
+trizen -S wps-office ttf-wps-fonts
+
+# Install PDF viewer
+pacman -S zathura zathura-pdf-mupdf
+
+# Install image viewer
+pacman -S sxiv
+
+# Install image editor
+pacman -S gimp
+
+# Install video editor
+pacman -S kdenlive frei0r-plugins dvdauthor breeze breeze-icons movit sox
+
+# Install OBS
+pacman -S obs-studio
+
+# Install audio editor
+pacman -S audacity
+
+# Install Chrome
+trizen -S google-chrome
+
+# Install messaging apps
+pacman -S messengerfordesktop
+trizen -S whatsapp-web-desktop skypeforlinux-stable-bin
+
+# Install IDEs
+pacman -S codeblocks hunspell-en_US pycharm-community-edition java-openjfx eclipse-java
+trizen -S visual-studio-code-bin
+
+# Install virtualization software
+pacman -S virtualbox virtualbox-guest-iso linux-zen-headers linux-lts-headers
+trizen -S virtualbox-ext-oracle
+gpasswd -a hydra vboxusers
+
+# Install LXD
+trizen -S lxd
+echo root:1000000:65536 > /etc/subuid
+echo root:1000000:65536 > /etc/subgid
+echo lxc.idmap = u 0 1000000 65536 >> /etc/lxc/default.conf
+echo lxc.idmap = u 0 1000000 65536 >> /etc/lxc/default.conf
+systemctl enable lxd
+gpasswd -a hydra lxd
+
+# Install steam
+pacman -S steam steam-native-runtime wqy-zenhei lib32-libva-intel-driver lib32-vulkan-intel
+
+# Install RetroArch
+pacman -S retroarch retroarch-assets-xmb retroarch-autoconfig-udev libretro-overlays libretro-shaders-glsl
+
+# Install wine for Windows applications
+pacman -S wine wine-mono wine_gecko winetricks
+
+# Exit chroot
+exit
+
+# Generate fstab then add entry for DLNA server and Public share
+genfstab -pU /mnt >> /mnt/etc/fstab
+vim /mnt/etc/fstab
+
+ --- [ R E B O O T ] ---
+
+# Setup network and time
+nmtui
+timedatectl set-ntp true 
+
+# Limit backlight
+light -Scrs intel_backlight 1
+
+# Install wine (running X server required)
+winetricks -q corefonts d3dx9_36 dotnet20 mfc42 ie6
+
+# Setup LXD
+lxd init
+
+# Arch Linux container ipv4 fix (run as user)
+lxc profile set default security.syscalls.blacklist "keyctl errno 38"

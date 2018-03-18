@@ -1,1 +1,0 @@
-../extra/play-spearmintmountain.sh

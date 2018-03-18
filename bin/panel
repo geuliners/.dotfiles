@@ -1,0 +1,65 @@
+#! /bin/sh
+
+dont_leave_any_traces() {
+    killall bspc
+    killall conky
+    killall panel_bar
+    bspc config top_padding 0
+    if [ -e /tmp/panel-$MONITOR.fifo ]; then
+        rm -rf /tmp/panel-$MONITOR.fifo
+    fi
+}
+
+trap "trap - TERM; dont_leave_any_traces; kill 0" INT TERM HUP QUIT EXIT
+
+COLOR_DEFAULT_FG="#a7a5a5"
+COLOR_DEFAULT_BG="#1C1C1C"
+COLOR_MONITOR_FG="#8dbcdf"
+COLOR_MONITOR_BG="#1C1C1C"
+COLOR_FOCUSED_MONITOR_FG="#b1d0e8"
+COLOR_FOCUSED_MONITOR_BG="#144b6c"
+COLOR_FREE_FG="#737171"
+COLOR_FREE_BG="#1C1C1C"
+COLOR_FOCUSED_FREE_FG="#1C1C1C"
+COLOR_FOCUSED_FREE_BG="#546E7A"
+COLOR_OCCUPIED_FG="#D8D8D8"
+COLOR_OCCUPIED_BG="#1C1C1C"
+COLOR_FOCUSED_OCCUPIED_FG="#D8D8D8"
+COLOR_FOCUSED_OCCUPIED_BG="#546E7A"
+COLOR_URGENT_FG="#f15d66"
+COLOR_URGENT_BG="#1C1C1C"
+COLOR_FOCUSED_URGENT_FG="#501d1f"
+COLOR_FOCUSED_URGENT_BG="#d5443e"
+COLOR_STATE_FG="#737171"
+COLOR_STATE_BG="#1C1C1C"
+COLOR_TITLE_FG="#737171"
+COLOR_TITLE_BG="#1C1C1C"
+COLOR_SYS_FG="#737171"
+COLOR_SYS_BG="#1C1C1C"
+
+monitors=$(xrandr | grep -o "^.* connected" | sed "s/ connected//")
+for MONITOR in $(echo $monitors); do
+
+    PANEL_FIFO="/tmp/panel-"$MONITOR".fifo"
+    PANEL_WM_NAME="panel-"$MONITOR
+
+    [ -e "$PANEL_FIFO" ] && rm -rf "$PANEL_FIFO"
+    mkfifo "$PANEL_FIFO"
+
+    bspc config top_padding $PANEL_HEIGHT
+    bspc subscribe report > "$PANEL_FIFO" &
+    clock -sf 'S%a %H:%M' > "$PANEL_FIFO" &
+    conky -qc "$HOME"/.config/conky/status_conky.conf > "$PANEL_FIFO" &
+
+    panel_bar < "$PANEL_FIFO" | lemonbar -a 32 -n "$PANEL_WM_NAME" -g x$PANEL_HEIGHT -f "$PANEL_FONT" -F "$COLOR_DEFAULT_FG" -B "$COLOR_DEFAULT_BG" "$MONITOR" | sh &
+
+    wid=$(xdo id -a "$PANEL_WM_NAME")
+    tries_left=20
+    while [ -z "$wid" -a "$tries_left" -gt 0 ] ; do
+        sleep 0.05
+        wid=$(xdo id -a "$PANEL_WM_NAME")
+        tries_left=$((tries_left - 1))
+    done
+    [ -n "$wid" ] && xdo above -t "$(xdo id -N Bspwm -n root | sort | head -n 1)" "$wid"
+    done
+wait

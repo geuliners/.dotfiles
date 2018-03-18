@@ -1,1 +1,0 @@
-../extra/play-lucid9.sh

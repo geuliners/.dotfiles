@@ -8,7 +8,7 @@ super + Return
 
 # program launcher
 super + d
-        dmenu_run -i -nb '#1C1C1C' -nf '#737171' -sb '#546E7A' -sf '#E8E8E8' -fn '-xos4-terminus-medium-r-normal--12-120-72-72-c-60-iso10646-1' -p 'Run:' -h "$PANEL_HEIGHT" -w 1306
+        dmenu_run -i -nb '#1C1C1C' -nf '#737171' -sb '#546E7A' -sf '#E8E8E8' -fn '-xos4-terminus-medium-r-normal--12-120-72-72-c-60-iso10646-1' -p 'Run:' -h "$PANEL_HEIGHT" -w 1306 -s 0
 
 
 

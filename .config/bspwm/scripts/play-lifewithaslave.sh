@@ -1,1 +1,0 @@
-../extra/play-lifewithaslave.sh

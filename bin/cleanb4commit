@@ -1,0 +1,66 @@
+#! /bin/sh
+
+trap clean_dirs INT TERM
+
+DOTFILES_DIR="$(pwd)/.dotfiles"
+DOTFILES_DUMMY_DIR="/tmp/dotfiles-tmp"
+DOTFILES_OUTPUT_DIR="$(pwd)/dotfiles"
+
+clean_dirs() {
+    if [ -d "$DOTFILES_DUMMY_DIR" ]; then
+        rm -r "$DOTFILES_DUMMY_DIR"
+    fi
+    if [ -d "$DOTFILES_OUTPUT_DIR" ]; then
+        rm -r "$DOTFILES_OUTPUT_DIR"
+    fi
+}
+
+if [ -z "$DOTFILES_DIR" ]; then
+    echo "Usage: cleanb4commit [path]"
+    echo ""
+    echo "Specify your dotfiles directory"
+else
+    cp -r   "$DOTFILES_DIR" "$DOTFILES_DUMMY_DIR"
+    if [ -f "$DOTFILES_DUMMY_DIR"/.muttrc ]; then
+        rm  "$DOTFILES_DUMMY_DIR"/.muttrc
+    else
+        echo "cleanb4commit: $DOTFILES_DIR/.muttrc: No such file or directory"
+    fi
+    if [ -d     "$DOTFILES_DUMMY_DIR"/.config/mutt ]; then
+        rm -r   "$DOTFILES_DUMMY_DIR"/.config/mutt
+    else
+        echo "cleanb4commit: $DOTFILES_DIR/.config/mutt: No such file or directory"
+    fi
+    if [ -f "$DOTFILES_DUMMY_DIR"/.config/ranger/rc.conf ]; then
+        rm  "$DOTFILES_DUMMY_DIR"/.config/ranger/rc.conf
+    else
+        echo "cleanb4commit: $DOTFILES_DIR/.config/ranger/rc.conf: No such file or directory"
+    fi
+    if [ -f "$DOTFILES_DUMMY_DIR"/.config/sysconfig/arch.conf ]; then
+        rm  "$DOTFILES_DUMMY_DIR"/.config/sysconfig/arch.conf
+    else
+        echo "cleanb4commit: $DOTFILES_DIR/.config/sysconfig/arch.conf: No such file or directory"
+    fi
+    if [ -f "$DOTFILES_DUMMY_DIR"/.config/sysconfig/fstab ]; then
+        rm  "$DOTFILES_DUMMY_DIR"/.config/sysconfig/fstab
+    else
+        echo "cleanb4commit: $DOTFILES_DIR/.config/sysconfig/fstab: No such file or directory"
+    fi
+    if [ -f "$DOTFILES_DUMMY_DIR"/.config/sysconfig/install.txt ]; then
+        rm  "$DOTFILES_DUMMY_DIR"/.config/sysconfig/install.txt
+    else
+        echo "cleanb4commit: $DOTFILES_DIR/.config/sysconfig/install.txt: No such file or directory"
+    fi
+    if [ -f "$DOTFILES_DUMMY_DIR"/.config/sysconfig/memtest86-efi.conf ]; then
+        rm  "$DOTFILES_DUMMY_DIR"/.config/sysconfig/memtest86-efi.conf
+    else
+        echo "cleanb4commit: $DOTFILES_DIR/.config/sysconfig/memtest86-efi.conf: No such file or directory"
+    fi
+    if [ -f "$DOTFILES_DUMMY_DIR"/.config/sysconfig/smb.conf ]; then
+        rm  "$DOTFILES_DUMMY_DIR"/.config/sysconfig/smb.conf
+    else
+        echo "cleanb4commit: $DOTFILES_DIR/.config/sysconfig/smb.conf: No such file or directory"
+    fi
+    mv "$DOTFILES_DUMMY_DIR" "$DOTFILES_OUTPUT_DIR"
+    echo "You may know commit the repository on $DOTFILES_OUTPUT_DIR"
+fi

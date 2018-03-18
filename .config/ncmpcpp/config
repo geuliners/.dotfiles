@@ -8,7 +8,6 @@ lyrics_directory = "~/.config/ncmpcpp/lyrics"
 
 # Display ..
 song_list_format = "$2 %A$0 - %t "
-#song_columns_list_format = "(3)[]{}(92)[white]{t} (4)[red]{l}"
 song_status_format = "$2%t $0 "
 playlist_display_mode = "classic" (classic/columns)
 

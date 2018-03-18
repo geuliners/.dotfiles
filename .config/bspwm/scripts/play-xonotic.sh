@@ -1,1 +1,0 @@
-../extra/play-xonotic.sh

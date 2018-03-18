@@ -1,1 +1,0 @@
-../extra/play-undertale.sh

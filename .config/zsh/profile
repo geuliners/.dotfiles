@@ -1,21 +1,22 @@
 EDITOR=vim
 PAGER=less
 WINEARCH=win32
+WINEPREFIX=$HOME/Wine
 PANEL_HEIGHT=18
 PANEL_FONT=-xos4-terminus-medium-r-normal--12-120-72-72-c-60-iso10646-1
 VDPAU_DRIVER=va_gl
 QT_QPA_PLATFORMTHEME=gtk2
 GTK_PATH=:/usr/lib/gtk-2.0
 BSPWM_SOCKET=/tmp/bspwm.socket
-export EDITOR PAGER WINEARCH PANEL_HEIGHT PANEL_FONT VDPAU_DRIVER QT_QPA_PLATFORMTHEME GTK_PATH BSPWM_SOCKET
+BG_IMAGE=$HOME/Pictures/strive.jpg
+export EDITOR PAGER WINEARCH WINEPREFIX PANEL_HEIGHT PANEL_FONT VDPAU_DRIVER QT_QPA_PLATFORMTHEME GTK_PATH BSPWM_SOCKET BG_IMAGE
 
-if [[ -d $HOME/.config/bspwm/scripts ]]; then
-    PATH=$PATH:$HOME/.config/bspwm/scripts
+if [[ -d $HOME/bin ]]; then
+    PATH=$PATH:$HOME/bin
     export PATH
 fi
-if [[ -d "$HOME/Documents/Virtualization/Wine" ]]; then
-    WINEPREFIX="$HOME/Documents/Virtualization/Wine"
-    export WINEPREFIX
+if [[ ! -d "$HOME/Wine" ]]; then
+    mkdir "$HOME/Wine"
 fi
 if [[ -d "/usr/lib/jvm/default" ]]; then
     PYCHARM_JDK=/usr/lib/jvm/default

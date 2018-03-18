@@ -11,12 +11,20 @@ bspc monitor -d 'ZSH' 'Web' 'Media' 'General'
 bspc desktop -l 'monocle'
 bspc desktop -f '^3'
 
-bspc rule -a URxvt                              desktop='^1' follow=on
+bspc rule -a URxvt                              desktop='^1' follow=on state=floating
 bspc rule -a Google-chrome                      desktop='^2' follow=on
+bspc rule -a Messenger\ for\ Desktop            desktop='^2' follow=on
+bspc rule -a Skype                              desktop='^2' follow=on
+bspc rule -a Tor\ Browser                       desktop='^2' follow=on
+bspc rule -a whats-app-nativefier-7bbd2c        desktop='^2' follow=on
 bspc rule -a Audacity				desktop='^3' follow=on
+bspc rule -a Blueberry.py			desktop='^3' follow=on
 bspc rule -a Bluetooth-sendto			desktop='^3' follow=on
+bspc rule -a Et 				desktop='^3' follow=on
 bspc rule -a Gimp				desktop='^3' follow=on
 bspc rule -a Gummi				desktop='^3' follow=on
+bspc rule -a Wpp 				desktop='^3' follow=on
+bspc rule -a Wps 				desktop='^3' follow=on
 bspc rule -a Sxiv				desktop='^3' follow=on
 bspc rule -a Zathura				desktop='^3' follow=on state=tiled
 bspc rule -a feh				desktop='^3' follow=on
@@ -24,17 +32,23 @@ bspc rule -a kdenlive				desktop='^3' follow=on
 bspc rule -a mpv				desktop='^3' follow=on
 bspc rule -a mtp-ng-qt				desktop='^3' follow=on
 bspc rule -a transmission			desktop='^3' follow=on
+bspc rule -a vlc				desktop='^3' follow=on
+bspc rule -a Code				desktop='^4' follow=on
 bspc rule -a Codeblocks				desktop='^4' follow=on
+bspc rule -a Eclipse				desktop='^4' follow=on
+bspc rule -a Java				desktop='^4' follow=on state=floating
 bspc rule -a Lxappearance			desktop='^4' follow=on
 bspc rule -a Pavucontrol			desktop='^4' follow=on
 bspc rule -a Simple-scan			desktop='^4' follow=on 
 bspc rule -a System-config-printer.py		desktop='^4' follow=on
 bspc rule -a Steam                              desktop='^4' follow=on
+bspc rule -a Minecraft\ 1.12.2                  desktop='^4' follow=on state=floating
 bspc rule -a VirtualBox				desktop='^4' follow=on
 bspc rule -a Vncviewer                          desktop='^4' follow=on center=true
-bspc rule -a Wine				desktop='^4' follow=on
+bspc rule -a Wine				desktop='^4' follow=on center=true
 bspc rule -a XCalc                              desktop='^4' follow=on state=floating
 bspc rule -a jetbrains-pycharm-ce		desktop='^4' follow=on
+bspc rule -a retroarch                          desktop='^4' follow=on
 
-panel &
 kdeinit5
+panel &
